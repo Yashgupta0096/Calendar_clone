@@ -29,11 +29,13 @@ export default function CalendarHeader() {
       >
         Today
       </button>
+      {/* Here we are using prev state of month to toggle the previous month */}
       <button onClick={handlePrevMonth}>
         <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
           chevron_left
         </span>
       </button>
+      {/* Here we are using prev state of month to toggle the next month */}
       <button onClick={handleNextMonth}>
         <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
           chevron_right

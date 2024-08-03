@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import GlobalContext from "../context/GlobalContext";
 
+// Array of label classes to use for event labels
 const labelsClasses = [
   "indigo",
   "gray",
@@ -11,27 +12,36 @@ const labelsClasses = [
 ];
 
 export default function EventModal() {
+  // Destructuring values from GlobalContext
   const {
-    setShowEventModal,
-    daySelected,
-    dispatchCalEvent,
-    selectedEvent,
+    setShowEventModal, // Function to toggle the visibility of the modal
+    daySelected, // The currently selected day
+    dispatchCalEvent, // Function to dispatch calendar events
+    selectedEvent, // The currently selected event (if any)
   } = useContext(GlobalContext);
 
+  // State for event title
   const [title, setTitle] = useState(
     selectedEvent ? selectedEvent.title : ""
   );
+
+  // State for event description
   const [description, setDescription] = useState(
     selectedEvent ? selectedEvent.description : ""
   );
+
+  // State for selected label
   const [selectedLabel, setSelectedLabel] = useState(
     selectedEvent
       ? labelsClasses.find((lbl) => lbl === selectedEvent.label)
       : labelsClasses[0]
   );
 
+  // Handle form submission
   function handleSubmit(e) {
-    e.preventDefault();
+    e.preventDefault(); // Prevents the default form submission behavior
+
+    // Creates an event object with current state values
     const calendarEvent = {
       title,
       description,
@@ -39,22 +49,28 @@ export default function EventModal() {
       day: daySelected.valueOf(),
       id: selectedEvent ? selectedEvent.id : Date.now(),
     };
+
+    // Dispatches action to update or add event based on whether an event is selected
     if (selectedEvent) {
       dispatchCalEvent({ type: "update", payload: calendarEvent });
     } else {
       dispatchCalEvent({ type: "push", payload: calendarEvent });
     }
 
+    // Closes the modal after submission
     setShowEventModal(false);
   }
+
   return (
     <div className="h-screen w-full fixed left-0 top-0 flex justify-center items-center">
       <form className="bg-white rounded-lg shadow-2xl w-1/4">
         <header className="bg-gray-100 px-4 py-2 flex justify-between items-center">
+          {/* Drag handle for modal */}
           <span className="material-icons-outlined text-gray-400">
             drag_handle
           </span>
           <div>
+            {/* Conditional delete button */}
             {selectedEvent && (
               <span
                 onClick={() => {
@@ -69,6 +85,7 @@ export default function EventModal() {
                 delete
               </span>
             )}
+            {/* Close button */}
             <button onClick={() => setShowEventModal(false)}>
               <span className="material-icons-outlined text-gray-400">
                 close
@@ -79,6 +96,7 @@ export default function EventModal() {
         <div className="p-3">
           <div className="grid grid-cols-1/5 items-end gap-y-7">
             <div></div>
+            {/* Input field for event title */}
             <input
               type="text"
               name="title"
@@ -88,10 +106,12 @@ export default function EventModal() {
               className="pt-3 border-0 text-gray-600 text-xl font-semibold pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
               onChange={(e) => setTitle(e.target.value)}
             />
+            {/* Display selected date */}
             <span className="material-icons-outlined text-gray-400">
               schedule
             </span>
             <p>{daySelected.format("dddd, MMMM DD")}</p>
+            {/* Input field for event description */}
             <span className="material-icons-outlined text-gray-400">
               segment
             </span>
@@ -104,6 +124,7 @@ export default function EventModal() {
               className="pt-3 border-0 text-gray-600 pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
               onChange={(e) => setDescription(e.target.value)}
             />
+            {/* Label selection */}
             <span className="material-icons-outlined text-gray-400">
               bookmark_border
             </span>
@@ -114,6 +135,7 @@ export default function EventModal() {
                   onClick={() => setSelectedLabel(lblClass)}
                   className={`bg-${lblClass}-500 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer`}
                 >
+                  {/* Display checkmark if label is selected */}
                   {selectedLabel === lblClass && (
                     <span className="material-icons-outlined text-white text-sm">
                       check
@@ -125,6 +147,7 @@ export default function EventModal() {
           </div>
         </div>
         <footer className="flex justify-end border-t p-3 mt-5">
+          {/* Save button */}
           <button
             type="submit"
             onClick={handleSubmit}
